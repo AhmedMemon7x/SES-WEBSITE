@@ -2719,16 +2719,31 @@ function PastTeamCard({ year, members, achievements, index }) {
           {/* Avatars preview */}
           <div style={{ display: "flex", marginRight: "1rem" }}>
             {members.slice(0, 4).map((m, i) => (
-              <div key={i} style={{
-                width: 34, height: 34, borderRadius: "50%",
-                background: `linear-gradient(135deg, ${m.color}30, ${m.color}10)`,
-                border: `2px solid #fff`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: "0.7rem", fontWeight: 800, color: m.color,
-                fontFamily: "'Bricolage Grotesque', sans-serif",
-                marginLeft: i === 0 ? 0 : -10, zIndex: 4 - i,
-                boxShadow: "0 2px 6px rgba(0,0,0,.1)",
-              }}>{m.initials}</div>
+              m.image ? (
+                <img 
+                  key={i}
+                  src={m.image} 
+                  alt={m.name}
+                  style={{
+                    width: 34, height: 34, borderRadius: "50%",
+                    objectFit: "cover",
+                    border: `2px solid #fff`,
+                    marginLeft: i === 0 ? 0 : -10, zIndex: 4 - i,
+                    boxShadow: "0 2px 6px rgba(0,0,0,.1)",
+                  }}
+                />
+              ) : (
+                <div key={i} style={{
+                  width: 34, height: 34, borderRadius: "50%",
+                  background: `linear-gradient(135deg, ${m.color}30, ${m.color}10)`,
+                  border: `2px solid #fff`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "0.7rem", fontWeight: 800, color: m.color,
+                  fontFamily: "'Bricolage Grotesque', sans-serif",
+                  marginLeft: i === 0 ? 0 : -10, zIndex: 4 - i,
+                  boxShadow: "0 2px 6px rgba(0,0,0,.1)",
+                }}>{m.initials}</div>
+              )
             ))}
             {members.length > 4 && (
               <div style={{
@@ -2757,34 +2772,48 @@ function PastTeamCard({ year, members, achievements, index }) {
 
         {/* Expanded content */}
         <div style={{
-          maxHeight: expanded ? 600 : 0,
+          maxHeight: expanded ? 1200 : 0,
           overflow: "hidden",
           transition: "max-height .5s cubic-bezier(0.4, 0, 0.2, 1)",
         }}>
           <div style={{ borderTop: `1px solid ${C.border}`, padding: "1.5rem 2rem 2rem" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "2rem" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: "2rem" }}>
               {/* Members grid */}
               <div>
                 <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.65rem", color: C.primary, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: "1rem", display: "flex", alignItems: "center", gap: 8 }}>
-                  <div style={{ width: 16, height: 1.5, background: C.primary, borderRadius: 2 }} /> Team Members
+                  <div style={{ width: 16, height: 1.5, background: C.primary, borderRadius: 2 }} /> Team Members ({members.length})
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.6rem" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: "0.5rem", maxHeight: 400, overflowY: "auto", paddingRight: 8 }}>
                   {members.map((m, i) => (
                     <div key={i} style={{
-                      display: "flex", alignItems: "center", gap: 8,
+                      display: "flex", alignItems: "center", gap: 10,
                       padding: "0.6rem 0.8rem", borderRadius: 10,
                       background: C.bg, border: `1px solid ${C.border}`,
                     }}>
+                      {m.image ? (
+                        <img 
+                          src={m.image} 
+                          alt={m.name}
+                          style={{
+                            width: 36, height: 36, borderRadius: "50%",
+                            objectFit: "cover", flexShrink: 0,
+                            border: `2px solid ${m.color}40`,
+                          }}
+                          onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                        />
+                      ) : null}
                       <div style={{
-                        width: 28, height: 28, borderRadius: "50%",
-                        background: `${m.color}18`, flexShrink: 0,
-                        display: "flex", alignItems: "center", justifyContent: "center",
-                        fontSize: "0.6rem", fontWeight: 800, color: m.color,
+                        width: 36, height: 36, borderRadius: "50%",
+                        background: `linear-gradient(135deg, ${m.color}30, ${m.color}15)`,
+                        flexShrink: 0, display: m.image ? "none" : "flex",
+                        alignItems: "center", justifyContent: "center",
+                        fontSize: "0.65rem", fontWeight: 800, color: m.color,
                         fontFamily: "'Bricolage Grotesque', sans-serif",
+                        border: `2px solid ${m.color}30`,
                       }}>{m.initials}</div>
-                      <div>
-                        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: C.darkPrimary, lineHeight: 1.2 }}>{m.name}</div>
-                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.55rem", color: m.color, textTransform: "uppercase", letterSpacing: "0.08em" }}>{m.role}</div>
+                      <div style={{ minWidth: 0 }}>
+                        <div style={{ fontSize: "0.78rem", fontWeight: 600, color: C.darkPrimary, lineHeight: 1.2, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.name}</div>
+                        <div style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "0.52rem", color: m.color, textTransform: "uppercase", letterSpacing: "0.06em", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{m.role}</div>
                       </div>
                     </div>
                   ))}
@@ -2823,27 +2852,28 @@ function PastTeamCard({ year, members, achievements, index }) {
 function TeamPage({ setPage }) {
   const [activeTab, setActiveTab] = useState("current");
 
-  // 5 Executive Bodies
+  // 5 Executive Bodies (Current Team - 2023-2024)
   const executives = [
-    { initials:"AK", color:C.primary,  name:"Ali Khan",       role:"President",         batch:"SE Batch 2022", bio:"Leading SES with a focus on technical excellence and community growth. Final year SE student passionate about distributed systems, cloud-native architecture, and open-source contributions.", linkedin:"#", github:"#" },
-    { initials:"SR", color:C.accent,   name:"Sana Raza",      role:"Vice President",    batch:"SE Batch 2022", bio:"Overseeing all operations and member experience. Strong background in project management, full-stack web development, and building inclusive tech communities at MUET.", linkedin:"#", github:"#" },
-    { initials:"HM", color:"#7C3AED",  name:"Hassan Mughal",  role:"General Secretary", batch:"SE Batch 2022", bio:"Manages internal communication, documentation, and coordination between all SES departments. Passionate about developer tooling and automation.", linkedin:"#", github:"#" },
-    { initials:"RM", color:"#DB2777",  name:"Rabia Memon",    role:"Treasurer",         batch:"SE Batch 2023", bio:"Handles all financial matters, budgeting, and resource allocation for SES events and activities. Expert in financial planning and accounting.", linkedin:"#", github:"#" },
-    { initials:"FS", color:C.warning,  name:"Fatima Siddiqui", role:"Joint Secretary",  batch:"SE Batch 2023", bio:"Assists the General Secretary in administrative tasks and member coordination. Focused on improving internal processes and member engagement.", linkedin:"#", github:"#" },
+    { initials:"FG", color:C.primary,  name:"Faraz Ghani",       role:"President",         batch:"SE Batch 2022", bio:"Leading SES with a focus on technical excellence and community growth. Passionate about innovation and building strong tech communities at MUET.", linkedin:"#", github:"#", image:"/placeholder-user.jpg" },
+    { initials:"SA", color:C.accent,   name:"Sarwat Aijaz",      role:"Vice President",    batch:"SE Batch 2022", bio:"Overseeing all operations and member experience. Strong background in project management and building inclusive tech communities at MUET.", linkedin:"#", github:"#", image:"/placeholder-user.jpg" },
+    { initials:"GK", color:"#7C3AED",  name:"Gotam Kumar",       role:"General Secretary", batch:"SE Batch 2022", bio:"Manages internal communication, documentation, and coordination between all SES departments. Passionate about developer tooling and automation.", linkedin:"#", github:"#", image:"/placeholder-user.jpg" },
+    { initials:"SS", color:"#DB2777",  name:"Sachal Sahito",     role:"Treasurer",         batch:"SE Batch 2023", bio:"Handles all financial matters, budgeting, and resource allocation for SES events and activities. Expert in financial planning and accounting.", linkedin:"#", github:"#", image:"/placeholder-user.jpg" },
+    { initials:"GM", color:C.warning,  name:"Ghulam Mustafa",    role:"Joint Secretary",   batch:"SE Batch 2023", bio:"Assists the General Secretary in administrative tasks and member coordination. Focused on improving internal processes and member engagement.", linkedin:"#", github:"#", image:"/placeholder-user.jpg" },
   ];
 
-  // 8 Different Teams
+  // 8 Different Teams (Current Team - 2023-2024)
   const teams = [
     { 
       icon: "💻", 
       color: C.primary, 
-      name: "Technical Team",
-      desc: "Building projects, conducting code reviews, and maintaining SES infrastructure.",
-      lead: { initials: "IB", name: "Ibrahim Bhutto", role: "Tech Lead" },
+      name: "Management Team",
+      desc: "Overseeing SES operations, coordinating events, and ensuring smooth organizational functioning.",
+      lead: { initials: "MA", name: "Masood Ali", role: "Head Director Management", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"AS", name:"Ahmed Shaikh" },
-        { initials:"KA", name:"Khalid Ansari" },
-        { initials:"ZA", name:"Zain Ali" },
+        { initials:"HM", name:"Humera Masood", image:"/placeholder-user.jpg" },
+        { initials:"SA", name:"Soorat Ali", image:"/placeholder-user.jpg" },
+        { initials:"MA", name:"Muhammad Ahmed", image:"/placeholder-user.jpg" },
+        { initials:"RN", name:"Rutba Nisar", image:"/placeholder-user.jpg" },
       ]
     },
     { 
@@ -2851,10 +2881,10 @@ function TeamPage({ setPage }) {
       color: "#DB2777", 
       name: "Graphic Design Team",
       desc: "Creating stunning visuals, posters, and brand assets for all SES events.",
-      lead: { initials: "OM", name: "Omar Mirza", role: "Design Lead" },
+      lead: { initials: "MQ", name: "Maryam Qureshi", role: "Head Director Designing", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"HN", name:"Hira Naz" },
-        { initials:"SJ", name:"Sameer Junejo" },
+        { initials:"MM", name:"Mahrukh Mahar", image:"/placeholder-user.jpg" },
+        { initials:"M", name:"Mustafa", image:"/placeholder-user.jpg" },
       ]
     },
     { 
@@ -2862,67 +2892,77 @@ function TeamPage({ setPage }) {
       color: C.accent, 
       name: "Media Team",
       desc: "Photography, videography, and capturing memorable moments at all events.",
-      lead: { initials: "AM", name: "Ayesha Malik", role: "Media Lead" },
+      lead: { initials: "UM", name: "Uroosham Memon", role: "Head Director Media", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"FA", name:"Fahad Ahmed" },
-        { initials:"NK", name:"Noor Khan" },
-        { initials:"RS", name:"Raza Shah" },
+        { initials:"RM", name:"Rubab Majid", image:"/placeholder-user.jpg" },
+        { initials:"HN", name:"Hafsa Noor", image:"/placeholder-user.jpg" },
+        { initials:"AZ", name:"Aimon Zehra", image:"/placeholder-user.jpg" },
       ]
     },
     { 
       icon: "📢", 
       color: "#7C3AED", 
-      name: "PR & Marketing Team",
+      name: "Marketing Team",
       desc: "Managing outreach, sponsorships, partnerships, and public relations.",
-      lead: { initials: "MJ", name: "Maryam Jatoi", role: "PR Lead" },
+      lead: { initials: "ZK", name: "Zain Khan Awan", role: "Head Director Marketing", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"BB", name:"Bilal Brohi" },
-        { initials:"SA", name:"Sadia Ahmed" },
+        { initials:"AH", name:"Abdul Haseeb", image:"/placeholder-user.jpg" },
       ]
     },
     { 
       icon: "📝", 
       color: C.warning, 
-      name: "Content Team",
+      name: "Editorial Team",
       desc: "Writing blogs, newsletters, social media posts, and educational content.",
-      lead: { initials: "NA", name: "Nadia Ali", role: "Content Lead" },
+      lead: { initials: "AS", name: "Aiman Shaikh", role: "Head Director Editorial", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"HK", name:"Hassan Khaskheli" },
-        { initials:"TA", name:"Taha Ali" },
+        { initials:"MR", name:"Mahad Shah Rashidi", image:"/placeholder-user.jpg" },
       ]
     },
     { 
       icon: "🎯", 
       color: C.success, 
-      name: "Events Team",
-      desc: "Planning, organizing, and executing all SES events and workshops.",
-      lead: { initials: "ZA", name: "Zainab Ahmed", role: "Events Head" },
+      name: "Logistics Team",
+      desc: "Planning, organizing, and executing all SES events logistics.",
+      lead: { initials: "HR", name: "Haram Rajput", role: "Head Director Logistics", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"YK", name:"Yasir Khan" },
-        { initials:"SB", name:"Sara Baloch" },
-        { initials:"UA", name:"Usman Ali" },
+        { initials:"JA", name:"Jahanzaib Ansari", image:"/placeholder-user.jpg" },
       ]
     },
     { 
-      icon: "🤝", 
+      icon: "🎬", 
       color: "#F59E0B", 
-      name: "Mentorship Team",
-      desc: "Connecting juniors with seniors and industry professionals for guidance.",
-      lead: { initials: "AB", name: "Asad Bhatti", role: "Mentorship Lead" },
+      name: "Videography Team",
+      desc: "Creating video content, event recordings, and promotional videos.",
+      lead: { initials: "HA", name: "Hassan Ahmed", role: "Head Director Videography", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"RN", name:"Rida Naz" },
-        { initials:"MH", name:"Moiz Hassan" },
+        { initials:"RS", name:"Rania Shah", image:"/placeholder-user.jpg" },
+      ]
+    },
+    { 
+      icon: "📷", 
+      color: "#06B6D4", 
+      name: "Photography Team",
+      desc: "Capturing memorable moments and event photography.",
+      lead: { initials: "RZ", name: "Raza Zaeem", role: "Head Director Photography", image:"/placeholder-user.jpg" },
+      members: [
+        { initials:"NJ", name:"Nashra Jahejo", image:"/placeholder-user.jpg" },
       ]
     },
     { 
       icon: "🌐", 
-      color: "#06B6D4", 
-      name: "Community Team",
-      desc: "Building community engagement, managing Discord, and member activities.",
-      lead: { initials: "SB", name: "Sara Baloch", role: "Community Lead" },
+      color: C.error, 
+      name: "Organization Council",
+      desc: "Supporting all SES teams and activities with coordination.",
+      lead: { initials: "TB", name: "Tayyaba Bhatti", role: "Head of Organization Council", image:"/placeholder-user.jpg" },
       members: [
-        { initials:"AH", name:"Ahsan Hussain" },
-        { initials:"FM", name:"Fatima Memon" },
+        { initials:"AB", name:"Abdul Basit", image:"/placeholder-user.jpg" },
+        { initials:"RS", name:"Rafay Shakeel", image:"/placeholder-user.jpg" },
+        { initials:"HN", name:"Hadisa Naqvi", image:"/placeholder-user.jpg" },
+        { initials:"HS", name:"Hadisa Syed", image:"/placeholder-user.jpg" },
+        { initials:"SN", name:"Saria Nadeem", image:"/placeholder-user.jpg" },
+        { initials:"GK", name:"Ghulam Hussain Khuhro", image:"/placeholder-user.jpg" },
+        { initials:"AF", name:"Areej Fatima", image:"/placeholder-user.jpg" },
       ]
     },
   ];
